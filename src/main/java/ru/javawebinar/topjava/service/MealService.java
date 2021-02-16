@@ -6,9 +6,9 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.util.Collection;
+import java.time.LocalTime;
+import java.util.List;
 
-import static ru.javawebinar.topjava.util.ValidationUtil.checkAuthorizationRights;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 
@@ -21,27 +21,28 @@ public class MealService {
         this.repository = repository;
     }
 
-    public Meal create(Meal meal) {
-        return repository.save(meal);
+    public Meal create(Meal meal, int userId) {
+        Meal savedMeal = repository.save(meal, userId);
+        return checkNotFoundWithId(savedMeal, savedMeal.getId());
     }
 
-    public void delete(int id) throws NotFoundException {
-        checkNotFoundWithId(repository.delete(id), id);
+    public void delete(int id, int userId) throws NotFoundException {
+        checkNotFoundWithId(repository.delete(id, userId), id);
     }
 
-    public Meal get(int id) throws NotFoundException {
-        Meal meal = checkNotFoundWithId(repository.get(id), id);
-        checkAuthorizationRights(meal.getUserId());
-        return meal;
+    public Meal get(int id, int userId) throws NotFoundException {
+        return checkNotFoundWithId(repository.get(id, userId), id);
     }
 
-    public void update(Meal meal) {
-        checkNotFoundWithId(repository.save(meal), meal.getId());
+    public void update(Meal meal, int userId) {
+        checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 
-    public Collection<Meal> getAll() {
-        Collection<Meal> meals = repository.getAll();
-        meals.stream().peek(val -> checkAuthorizationRights(val.getUserId()));
-        return meals;
+    public List<Meal> getAll(int userId) {
+        return repository.getAll(userId);
+    }
+
+    public List<Meal> getSortedByDate(int userId, LocalTime startTime, LocalTime endTime) {
+        return repository.getSortByDate(userId, startTime, endTime);
     }
 }

@@ -3,9 +3,6 @@ package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.AbstractBaseEntity;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-import ru.javawebinar.topjava.web.SecurityUtil;
-
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 public class ValidationUtil {
 
@@ -36,18 +33,11 @@ public class ValidationUtil {
     }
 
     public static void assureIdConsistent(AbstractBaseEntity entity, int id) {
-//      conservative when you reply, but accept liberally (http://stackoverflow.com/a/32728226/548473)
+        //      conservative when you reply, but accept liberally (http://stackoverflow.com/a/32728226/548473)
         if (entity.isNew()) {
             entity.setId(id);
         } else if (entity.getId() != id) {
             throw new IllegalArgumentException(entity + " must be with id=" + id);
         }
     }
-
-    public static void checkAuthorizationRights(int userId) {
-        if (userId != authUserId()) {
-            throw new NotFoundException("The current user cannot access this entity");
-        }
-    }
-
 }
