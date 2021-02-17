@@ -9,7 +9,7 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
@@ -30,9 +30,10 @@ public class MealRestController {
         return MealsUtil.getTos(service.getAll(authUserId()), authUserCaloriesPerDay());
     }
 
-    public List<MealTo> getSortedByDate(int userId, LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getSortedByDate(LocalDateTime startTime, LocalDateTime endTime) {
         log.info("getAll Meal With Exceed");
-        return MealsUtil.getTos(service.getSortedByDate(authUserId(), startTime, endTime), authUserCaloriesPerDay());
+        return MealsUtil.getFilteredTos(service.getFilteredByDate(startTime.toLocalDate(), endTime.toLocalDate(), authUserId()),
+                authUserCaloriesPerDay(), startTime.toLocalTime(), endTime.toLocalTime());
     }
 
     public Meal get(int id) {

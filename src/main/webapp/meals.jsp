@@ -23,6 +23,20 @@
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
+    <form name="" method="get">
+        <label>Start date:</label>
+        <input id="startdate" name="startdate" type="date" value="2017-06-01">
+
+        <label>Start date:</label>
+        <input id="enddate" name="enddate" type="date" value="2017-06-01">
+
+        <label>Start Time:</label>
+        <input type="time" id="starttime" name="starttime" min="00:00" max="23:00" value="01:00" required>
+
+        <label>End Time:</label>
+        <input type="time" id="endtime" var="endtime" min="00:00" max="23:00" value="12:00" required>
+        <a href="meals?action=filter>Filter</a>
+    </form>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>

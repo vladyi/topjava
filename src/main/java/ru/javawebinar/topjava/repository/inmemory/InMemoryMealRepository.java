@@ -3,10 +3,9 @@ package ru.javawebinar.topjava.repository.inmemory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,7 +25,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Meal save(Meal meal, int userId) {
+    public Meal save(Meal meal, Integer userId) {
 
         if (meal.isNew()) {
             meal.setUserId(userId);
@@ -34,12 +33,16 @@ public class InMemoryMealRepository implements MealRepository {
             repository.put(meal.getId(), meal);
             return meal;
         }
+
+        if (!meal.getUserId().equals(userId))
+            return null;
+
         // handle case: update, but not present in storage
         return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
-    public boolean delete(int id, int userId) {
+    public boolean delete(int id, Integer userId) {
         if (get(id, userId) == null)
             return false;
 
@@ -47,22 +50,24 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Meal get(int id, int userId) {
+    public Meal get(int id, Integer userId) {
         Meal meal = repository.get(id);
-        return meal.getUserId() == userId ? meal : null;
+        return meal.getUserId().equals(userId) ? meal : null;
     }
 
     @Override
-    public List<Meal> getAll(int userId) {
+    public List<Meal> getAll(Integer userId) {
         return repository.values().stream()
-                .filter(m -> m.getUserId() == userId)
+                .filter(m -> m.getUserId().equals(userId))
                 .sorted(comparing(Meal::getDateTime).reversed())
                 .collect(toList());
     }
 
-    public List<Meal> getSortByDate(int userId, LocalTime startTime, LocalTime endTime) {
+    @Override
+    public List<Meal> getFilteredByDate(LocalDate startTime, LocalDate endTime, Integer userId) {
         return getAll(userId).stream()
-                .filter(meal -> DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime)).collect(toList());
+                .filter(meal -> (meal.getDateTime().toLocalDate().isAfter(startTime) && meal.getDateTime().toLocalDate().isBefore(endTime)))
+                .collect(toList());
     }
 }
 
