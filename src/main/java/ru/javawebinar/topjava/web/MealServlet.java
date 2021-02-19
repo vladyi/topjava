@@ -13,10 +13,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
+import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 public class MealServlet extends HttpServlet {
@@ -36,7 +40,7 @@ public class MealServlet extends HttpServlet {
     @Override
     public void destroy() {
         applicationContext.close();
-        applicationContext = null;
+        super.destroy();
     }
 
     @Override
@@ -81,7 +85,11 @@ public class MealServlet extends HttpServlet {
                 break;
             case "filter":
                 log.info("get sorted");
-//                request.setAttribute("meals", mealRestController.getSortedByDate());
+                LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
+                LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
+                LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
+                LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
+                request.setAttribute("meals", mealRestController.getSortedByDate(startDate, startTime, endDate, endTime));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "all":
@@ -96,12 +104,5 @@ public class MealServlet extends HttpServlet {
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
-    }
-
-    private void get(HttpServletRequest request) {
-        String enddate = Objects.requireNonNull(request.getParameter("enddate"));
-        String startdate = Objects.requireNonNull(request.getParameter("startdate"));
-        String starttime = Objects.requireNonNull(request.getParameter("starttime"));
-        String endtime = Objects.requireNonNull(request.getParameter("endtime"));
     }
 }
