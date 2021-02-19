@@ -21,28 +21,28 @@ public class MealService {
         this.repository = repository;
     }
 
-    public Meal create(Meal meal, Integer userId) {
+    public Meal create(Meal meal, int userId) {
         Meal savedMeal = repository.save(meal, userId);
         return checkNotFoundWithId(savedMeal, savedMeal.getId());
     }
 
-    public void delete(int id, Integer userId) throws NotFoundException {
+    public void delete(int id, int userId) throws NotFoundException {
         checkNotFoundWithId(repository.delete(id, userId), id);
     }
 
-    public Meal get(int id, Integer userId) throws NotFoundException {
+    public Meal get(int id, int userId) throws NotFoundException {
         return checkNotFoundWithId(repository.get(id, userId), id);
     }
 
-    public void update(Meal meal, Integer userId) {
+    public void update(Meal meal, int userId) {
         checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 
-    public List<Meal> getAll(Integer userId) {
+    public List<Meal> getAll(int userId) {
         return repository.getAll(userId);
     }
 
-    public List<Meal> getFilteredByDate(LocalDate startTime, LocalDate endTime, Integer userId) {
+    public List<Meal> getFilteredByDate(LocalDate startTime, LocalDate endTime, int userId) {
         return repository.getFilteredByDate(startTime, endTime, userId);
     }
 }

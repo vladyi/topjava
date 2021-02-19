@@ -25,7 +25,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Meal save(Meal meal, Integer userId) {
+    public Meal save(Meal meal, int userId) {
 
         if (meal.isNew()) {
             meal.setUserId(userId);
@@ -42,7 +42,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public boolean delete(int id, Integer userId) {
+    public boolean delete(int id, int userId) {
         if (get(id, userId) == null)
             return false;
 
@@ -50,13 +50,13 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Meal get(int id, Integer userId) {
+    public Meal get(int id, int userId) {
         Meal meal = repository.get(id);
         return meal.getUserId().equals(userId) ? meal : null;
     }
 
     @Override
-    public List<Meal> getAll(Integer userId) {
+    public List<Meal> getAll(int userId) {
         return repository.values().stream()
                 .filter(m -> m.getUserId().equals(userId))
                 .sorted(comparing(Meal::getDateTime).reversed())
@@ -64,7 +64,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getFilteredByDate(LocalDate startTime, LocalDate endTime, Integer userId) {
+    public List<Meal> getFilteredByDate(LocalDate startTime, LocalDate endTime, int userId) {
         return getAll(userId).stream()
                 .filter(meal -> (meal.getDateTime().toLocalDate().isAfter(startTime) && meal.getDateTime().toLocalDate().isBefore(endTime)))
                 .collect(toList());
