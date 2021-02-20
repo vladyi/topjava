@@ -15,6 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static java.lang.Integer.valueOf;
+
 @Repository
 public class InMemoryMealRepository implements MealRepository {
 
@@ -35,9 +37,10 @@ public class InMemoryMealRepository implements MealRepository {
             return meal;
         }
 
-        if (!meal.getUserId().equals(userId))
+        if (!mealMap.get(meal.getId()).getUserId().equals(userId))
             return null;
 
+        meal.setUserId(userId);
         // handle case: update, but not present in storage
         return mealMap.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
@@ -68,7 +71,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     private List<Meal> filterByPredicate(int userId, Predicate<Meal> filter) {
-        Predicate<Meal> userFilter = m -> m.getUserId().equals(userId);
+        Predicate<Meal> userFilter = m -> valueOf(userId).equals(m.getUserId());
 
         return mealMap.values().stream()
                 .filter(userFilter.and(filter))
