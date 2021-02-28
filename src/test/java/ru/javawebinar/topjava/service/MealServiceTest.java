@@ -14,6 +14,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.ADMIN_MEAL_ID;
+import static ru.javawebinar.topjava.MealTestData.NOT_EXISTS_MEAL_ID;
 import static ru.javawebinar.topjava.MealTestData.getDuplicated;
 import static ru.javawebinar.topjava.MealTestData.getExists;
 import static ru.javawebinar.topjava.MealTestData.getNew;
@@ -58,18 +59,28 @@ public class MealServiceTest {
     }
 
     @Test
+    public void deletedNotExists() {
+        assertThrows(NotFoundException.class, () -> mealService.delete(NOT_EXISTS_MEAL_ID, USER_ID));
+    }
+
+    @Test
     public void get() {
         Meal mealActual = mealService.get(ADMIN_MEAL_ID, ADMIN_ID);
         MealTestData.assertMatch(mealActual, getExists());
     }
 
     @Test
-    public void getNotFound() {
+    public void getNotExist() {
+        assertThrows(NotFoundException.class, () -> mealService.get(NOT_EXISTS_MEAL_ID, ADMIN_ID));
+    }
+
+    @Test
+    public void getNotOwn() {
         assertThrows(NotFoundException.class, () -> mealService.get(ADMIN_MEAL_ID, USER_ID));
     }
 
     @Test
-    public void updateNotFound() {
+    public void updateNotOwn() {
         assertThrows(NotFoundException.class, () -> mealService.update(mealService.get(ADMIN_MEAL_ID, ADMIN_ID), USER_ID));
     }
 }
