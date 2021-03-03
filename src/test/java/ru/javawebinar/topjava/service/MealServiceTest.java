@@ -57,6 +57,7 @@ public class MealServiceTest {
 
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
+
         @Override
         protected void succeeded(long nanos, Description description) {
             collectTestExecutionData(description, "succeeded", nanos);

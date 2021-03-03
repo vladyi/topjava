@@ -10,9 +10,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @Transactional(readOnly = true)
