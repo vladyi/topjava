@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.model;
 
 import org.hibernate.validator.constraints.Range;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +34,7 @@ public class Meal extends AbstractBaseEntity {
     public static final String BY_DATES = "Meal.getBetweenHalfOpen";
     public static final String ALL_SORTED = "Meal.getAllSorted";
 
-    @Column(name = "date_time", nullable = false, columnDefinition = "timestamp default now()")
+    @Column(name = "date_time", nullable = false, columnDefinition = "timestamp")
     @NotNull
     private LocalDateTime dateTime;
 
@@ -42,13 +43,14 @@ public class Meal extends AbstractBaseEntity {
     @Size(min = 5, max = 100)
     private String description;
 
-    @Column(name = "calories", nullable = false, columnDefinition = "int default 2000")
+    @Column(name = "calories", nullable = false, columnDefinition = "int")
     @Range(min = 10, max = 10000)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id")
     @NotNull
+    @Nullable
     private User user;
 
     public Meal() {
