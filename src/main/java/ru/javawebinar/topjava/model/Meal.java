@@ -22,11 +22,13 @@ import java.time.LocalTime;
 @NamedQueries({
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
         @NamedQuery(name = Meal.GET, query = "SELECT m FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
-        @NamedQuery(name = Meal.BY_DATES, query = "SELECT m FROM Meal m WHERE m.user.id=:userId AND m.dateTime >= ?1 AND m.dateTime < ?2 ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.BY_DATES, query = "SELECT m FROM Meal m WHERE m.user.id=:userId AND m.dateTime >= ?1 " +
+                "AND m.dateTime < ?2 ORDER BY m.dateTime DESC"),
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC"),
 })
 @Entity
-@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"},
+        name = "meals_unique_user_datetime_idx")})
 public class Meal extends AbstractBaseEntity {
 
     public static final String DELETE = "Meal.delete";
@@ -48,9 +50,8 @@ public class Meal extends AbstractBaseEntity {
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     @NotNull
-    @Nullable
     private User user;
 
     public Meal() {

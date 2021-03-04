@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.repository.jpa;
 
-import org.hibernate.CacheMode;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
@@ -11,9 +9,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @Transactional(readOnly = true)
@@ -46,7 +42,7 @@ public class JpaMealRepository implements MealRepository {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Meal get(int id, int userId) {
         Meal meal = em.find(Meal.class, id);
 
@@ -54,20 +50,12 @@ public class JpaMealRepository implements MealRepository {
             return null;
         }
 
-        if (meal.getUser() == null) {
-            return null;
-        }
-
-        if (!meal.getUser().getId().equals(userId)) {
-            return null;
-        }
-
-        return meal;
-//Leave it for Meal.GET query example
-//        return DataAccessUtils.singleResult(em.createNamedQuery(Meal.GET, Meal.class)
-//                .setParameter("id", id)
-//                .setParameter("userId", userId)
-//                .getResultList());
+        return !meal.getUser().getId().equals(userId) ? null : meal;
+        //Leave it for Meal.GET query example
+        //        return DataAccessUtils.singleResult(em.createNamedQuery(Meal.GET, Meal.class)
+        //                .setParameter("id", id)
+        //                .setParameter("userId", userId)
+        //                .getResultList());
     }
 
     @Override

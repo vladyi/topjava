@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.AssumptionViolatedException;
 import org.junit.Rule;
@@ -37,18 +38,11 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
-    @Autowired
-    private MealService service;
-
     private static final Logger logger = LoggerFactory.getLogger(MealServiceTest.class);
     private static final List<String> messages = new ArrayList<>();
 
-    private static void collectTestExecutionData(Description description, String status, long nanos) {
-        String testName = description.getMethodName();
-        String message = String.format("Test %s %s, execute %d microseconds",
-                testName, status, TimeUnit.NANOSECONDS.toMicros(nanos));
-        messages.add(message);
-    }
+    @Autowired
+    private MealService service;
 
     @AfterClass
     public static void printTestResults() {
@@ -59,25 +53,17 @@ public class MealServiceTest {
     public Stopwatch stopwatch = new Stopwatch() {
 
         @Override
-        protected void succeeded(long nanos, Description description) {
-            collectTestExecutionData(description, "succeeded", nanos);
-        }
-
-        @Override
-        protected void failed(long nanos, Throwable e, Description description) {
-            collectTestExecutionData(description, "failed", nanos);
-        }
-
-        @Override
-        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
-            collectTestExecutionData(description, "skipped", nanos);
-        }
-
-        @Override
         protected void finished(long nanos, Description description) {
-            collectTestExecutionData(description, "finished", nanos);
+            collectTestExecutionData(description, nanos);
         }
     };
+
+    private static void collectTestExecutionData(Description description, long nanos) {
+        String testName = description.getMethodName();
+        String message = String.format("%s%" + (30 - testName.length()) + "s%d ms", testName, " ", TimeUnit.NANOSECONDS.toMillis(nanos));
+        logger.info(message);
+        messages.add(message);
+    }
 
     @Test
     public void delete() {
