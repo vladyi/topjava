@@ -20,7 +20,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 @Controller
 public class AbstractMealRestController {
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractMealRestController.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private final MealService service;
 
@@ -66,7 +66,7 @@ public class AbstractMealRestController {
      * <li>by time for every date</li>
      * </ol>
      */
-    protected List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
+    public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
                                    @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
         int userId = SecurityUtil.authUserId();
         log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
