@@ -3,8 +3,9 @@ package ru.javawebinar.topjava.web.meal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 
@@ -21,19 +22,19 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @Controller
 @RequestMapping(value = "/meals")
-public class JspMealController extends AbstractMealRestController {
+public class JspMealController extends AbstractMealController {
 
     public JspMealController(MealService service) {
         super(service);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String getAll(Model model) {
         model.addAttribute("meals", getAll());
         return "meals";
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"action=filter"})
+    @GetMapping(params = {"action=filter"})
     public String filter(HttpServletRequest request) {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
@@ -43,14 +44,14 @@ public class JspMealController extends AbstractMealRestController {
         return "meals";
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"action=create"})
+    @GetMapping(params = {"action=create"})
     public String create(HttpServletRequest request) {
         final Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
         request.setAttribute("meal", meal);
         return "mealForm";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public String add(HttpServletRequest request) throws UnsupportedEncodingException {
         request.setCharacterEncoding("UTF-8");
 
@@ -66,14 +67,14 @@ public class JspMealController extends AbstractMealRestController {
         return "redirect:meals";
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"action=update"})
+    @GetMapping(params = {"action=update"})
     public String edit(HttpServletRequest request) {
         final Meal meal = get(getId(request));
         request.setAttribute("meal", meal);
         return "mealForm";
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"action=delete"})
+    @GetMapping(params = {"action=delete"})
     public String delete(HttpServletRequest request) {
         int id = getId(request);
         super.delete(id);
