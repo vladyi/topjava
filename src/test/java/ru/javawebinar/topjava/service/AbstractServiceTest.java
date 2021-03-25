@@ -30,7 +30,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.getRootCause;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 @ActiveProfiles(resolver = ActiveDbProfileResolver.class)
-abstract public class AbstractServiceTest {
+public abstract class AbstractServiceTest {
 
     @ClassRule
     public static ExternalResource summary = TimingRules.SUMMARY;
@@ -41,13 +41,12 @@ abstract public class AbstractServiceTest {
     @Autowired
     private Environment environment;
 
-    @Before
-    public void checkForJdbcProfile() {
-        Assume.assumeFalse(Arrays.stream(environment.getActiveProfiles()).anyMatch(JDBC::equals));
+    public boolean isJdbcProfile() {
+        return Arrays.stream(environment.getActiveProfiles()).anyMatch(JDBC::equals);
     }
 
     //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778
-    public <T extends Throwable> void validateRootCause(Class<T> rootExceptionClass, Runnable runnable) {
+    protected <T extends Throwable> void validateRootCause(Class<T> rootExceptionClass, Runnable runnable) {
         assertThrows(rootExceptionClass, () -> {
             try {
                 runnable.run();
