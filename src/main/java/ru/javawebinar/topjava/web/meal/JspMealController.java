@@ -21,7 +21,7 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @Controller
-@RequestMapping(value = "/meals")
+@RequestMapping("/meals")
 public class JspMealController extends AbstractMealController {
 
     public JspMealController(MealService service) {
@@ -34,25 +34,25 @@ public class JspMealController extends AbstractMealController {
         return "meals";
     }
 
-    @GetMapping(params = {"action=filter"})
-    public String filter(HttpServletRequest request) {
+    @GetMapping("/filter")
+    public String filter(HttpServletRequest request, Model model) {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
         LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
         LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
-        request.setAttribute("meals", getBetween(startDate, startTime, endDate, endTime));
+        model.addAttribute("meals", getBetween(startDate, startTime, endDate, endTime));
         return "meals";
     }
 
-    @GetMapping(params = {"action=create"})
-    public String create(HttpServletRequest request) {
+    @GetMapping("/create")
+    public String create(Model model) {
         final Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
-        request.setAttribute("meal", meal);
+        model.addAttribute("meal", meal);
         return "mealForm";
     }
 
     @PostMapping
-    public String add(HttpServletRequest request) throws UnsupportedEncodingException {
+    public String updateOrCreate(HttpServletRequest request) throws UnsupportedEncodingException {
         request.setCharacterEncoding("UTF-8");
 
         Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
@@ -64,21 +64,21 @@ public class JspMealController extends AbstractMealController {
         } else {
             create(meal);
         }
-        return "redirect:meals";
+        return "redirect:/meals";
     }
 
-    @GetMapping(params = {"action=update"})
-    public String edit(HttpServletRequest request) {
+    @GetMapping("/update")
+    public String edit(HttpServletRequest request, Model model) {
         final Meal meal = get(getId(request));
-        request.setAttribute("meal", meal);
+        model.addAttribute("meal", meal);
         return "mealForm";
     }
 
-    @GetMapping(params = {"action=delete"})
+    @GetMapping("/delete")
     public String delete(HttpServletRequest request) {
         int id = getId(request);
-        super.delete(id);
-        return "redirect:meals";
+        delete(id);
+        return "redirect:/meals";
     }
 
     private int getId(HttpServletRequest request) {
