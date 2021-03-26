@@ -2,8 +2,8 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
@@ -17,43 +17,39 @@ import java.util.List;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
-@Controller
-public class AbstractMealController {
+public abstract class AbstractMealController {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final MealService service;
+    @Autowired
+    private MealService service;
 
-    public AbstractMealController(MealService service) {
-        this.service = service;
-    }
-
-    protected Meal get(int id) {
+    public Meal get(int id) {
         int userId = SecurityUtil.authUserId();
         log.info("get meal {} for user {}", id, userId);
         return service.get(id, userId);
     }
 
-    protected void delete(int id) {
+    public void delete(int id) {
         int userId = SecurityUtil.authUserId();
         log.info("delete meal {} for user {}", id, userId);
         service.delete(id, userId);
     }
 
-    protected List<MealTo> getAll() {
+    public List<MealTo> getAll() {
         int userId = SecurityUtil.authUserId();
         log.info("getAll for user {}", userId);
         return MealsUtil.getTos(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay());
     }
 
-    protected Meal create(Meal meal) {
+    public Meal create(Meal meal) {
         int userId = SecurityUtil.authUserId();
         checkNew(meal);
         log.info("create {} for user {}", meal, userId);
         return service.create(meal, userId);
     }
 
-    protected void update(Meal meal, int id) {
+    public void update(Meal meal, int id) {
         int userId = SecurityUtil.authUserId();
         assureIdConsistent(meal, id);
         log.info("update {} for user {}", meal, userId);

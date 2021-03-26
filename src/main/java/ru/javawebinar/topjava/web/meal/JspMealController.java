@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.service.MealService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -24,16 +23,6 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 @RequestMapping("/meals")
 public class JspMealController extends AbstractMealController {
 
-    public JspMealController(MealService service) {
-        super(service);
-    }
-
-    @GetMapping
-    public String getAll(Model model) {
-        model.addAttribute("meals", getAll());
-        return "meals";
-    }
-
     @GetMapping("/filter")
     public String filter(HttpServletRequest request, Model model) {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
@@ -46,15 +35,12 @@ public class JspMealController extends AbstractMealController {
 
     @GetMapping("/create")
     public String create(Model model) {
-        final Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
-        model.addAttribute("meal", meal);
+        model.addAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
         return "mealForm";
     }
 
     @PostMapping
     public String updateOrCreate(HttpServletRequest request) throws UnsupportedEncodingException {
-        request.setCharacterEncoding("UTF-8");
-
         Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
@@ -69,8 +55,7 @@ public class JspMealController extends AbstractMealController {
 
     @GetMapping("/update")
     public String edit(HttpServletRequest request, Model model) {
-        final Meal meal = get(getId(request));
-        model.addAttribute("meal", meal);
+        model.addAttribute("meal", get(getId(request)));
         return "mealForm";
     }
 
