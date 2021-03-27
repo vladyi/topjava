@@ -7,7 +7,8 @@
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
-    <h2><spring:message code="meal.title"/></h2>
+    <h3><spring:message code="meal.title"/></h3>
+
     <form method="get" action="meals/filter">
         <dl>
             <dt><spring:message code="meal.fromdate"/>:</dt>
