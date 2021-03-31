@@ -24,8 +24,9 @@ import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
 import static ru.javawebinar.topjava.MealTestData.getNew;
 import static ru.javawebinar.topjava.MealTestData.getUpdated;
 import static ru.javawebinar.topjava.MealTestData.meal1;
+import static ru.javawebinar.topjava.MealTestData.meal2;
 import static ru.javawebinar.topjava.MealTestData.meals;
-import static ru.javawebinar.topjava.MealTestData.sortedMeals;
+import static ru.javawebinar.topjava.MealTestData.filteredMeals;
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
@@ -87,10 +88,10 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetweenDates() throws Exception {
-        String url = REST_URL + "filter?start='" + MealTestData.DATE + "'&end='" + MealTestData.DATE + "'";
+        String url = REST_URL + "filter?startDate=" + meal2.getDate() + "&endDate=" + meal2.getDate();
         perform(MockMvcRequestBuilders.get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEALTO_MATCHER.contentJson(MealsUtil.getTos(sortedMeals, SecurityUtil.authUserCaloriesPerDay())));
+                .andExpect(MEALTO_MATCHER.contentJson(MealsUtil.getTos(filteredMeals, SecurityUtil.authUserCaloriesPerDay())));
     }
 }
