@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class MealTo {
+
     private final Integer id;
 
     private final LocalDateTime dateTime;
@@ -46,8 +47,10 @@ public class MealTo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         MealTo mealTo = (MealTo) o;
         return calories == mealTo.calories &&
                 excess == mealTo.excess &&

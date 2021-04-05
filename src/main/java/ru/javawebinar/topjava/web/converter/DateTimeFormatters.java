@@ -11,6 +11,7 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 public class DateTimeFormatters {
+
     public static class LocalDateFormatter implements Formatter<LocalDate> {
 
         @Override

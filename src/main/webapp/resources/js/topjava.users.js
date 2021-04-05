@@ -5,7 +5,6 @@ const ctx = {
     ajaxUrl: userAjaxUrl
 };
 
-// $(document).ready(function () {
 $(function () {
     makeEditable(
         $("#datatable").DataTable({

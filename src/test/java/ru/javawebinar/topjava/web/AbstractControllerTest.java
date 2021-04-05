@@ -22,8 +22,6 @@ import javax.annotation.PostConstruct;
         "classpath:spring/spring-mvc.xml",
         "classpath:spring/spring-db.xml"
 })
-//@WebAppConfiguration
-//@ExtendWith(SpringExtension.class)
 @Transactional
 @ActiveProfiles(resolver = AllActiveProfileResolver.class)
 public abstract class AbstractControllerTest {

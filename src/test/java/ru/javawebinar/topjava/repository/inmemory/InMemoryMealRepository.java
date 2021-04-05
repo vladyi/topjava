@@ -12,16 +12,20 @@ import ru.javawebinar.topjava.util.Util;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
+
     private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
 
-    // Map  userId -> mealRepository
     private final Map<Integer, InMemoryBaseRepository<Meal>> usersMealsMap = new ConcurrentHashMap<>();
 
     {
@@ -29,7 +33,6 @@ public class InMemoryMealRepository implements MealRepository {
         MealTestData.meals.forEach(userMeals::put);
         usersMealsMap.put(UserTestData.USER_ID, userMeals);
     }
-
 
     @Override
     public Meal save(Meal meal, int userId) {

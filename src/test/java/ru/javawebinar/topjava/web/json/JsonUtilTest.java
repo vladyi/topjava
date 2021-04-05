@@ -6,7 +6,9 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.util.List;
 
-import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
+import static ru.javawebinar.topjava.MealTestData.adminMeal1;
+import static ru.javawebinar.topjava.MealTestData.meals;
 
 class JsonUtilTest {
 

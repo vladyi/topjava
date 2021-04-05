@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.TestUtil.readListFromJsonMvcResult;
 
 public class TestMatcher<T> {
+
     private final Class<T> clazz;
     private final BiConsumer<T, T> assertion;
     private final BiConsumer<Iterable<T>, Iterable<T>> iterableAssertion;
