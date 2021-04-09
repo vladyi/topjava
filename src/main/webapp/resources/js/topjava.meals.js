@@ -1,8 +1,15 @@
 const mealAjaxUrl = "profile/meals/";
 
 const ctx = {
-    ajaxUrl: mealAjaxUrl
-};
+    ajaxUrl: mealAjaxUrl,
+    updateTable: function () {
+        $.ajax({
+            type: "GET",
+            url: "profile/meals/filter",
+            data: $("#filter").serialize()
+        }).done(updateTableByData);
+    }
+}
 
 $(function () {
     makeEditable(
