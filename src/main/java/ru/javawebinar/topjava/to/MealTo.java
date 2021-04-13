@@ -1,18 +1,24 @@
 package ru.javawebinar.topjava.to;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class MealTo extends BaseTo {
 
+    @NotBlank
     private final LocalDateTime dateTime;
 
+    @NotBlank
+    @Size(min = 5, max = 100)
     private final String description;
 
-    private final int calories;
+    @NotBlank
+    private final Integer calories;
 
-    private final boolean excess;
+    private final Boolean excess;
 
     @ConstructorProperties({"id", "dateTime", "description", "calories", "excess"})
     public MealTo(Integer id, LocalDateTime dateTime, String description, int calories, boolean excess) {
@@ -31,11 +37,11 @@ public class MealTo extends BaseTo {
         return description;
     }
 
-    public int getCalories() {
+    public Integer getCalories() {
         return calories;
     }
 
-    public boolean isExcess() {
+    public Boolean isExcess() {
         return excess;
     }
 
