@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.MealsUtil.createNewFromTo;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
@@ -43,11 +42,6 @@ public abstract class AbstractMealController {
         return MealsUtil.getTos(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay());
     }
 
-    public void create(MealTo mealTo) {
-        log.info("create from to {}", mealTo);
-        create(createNewFromTo(mealTo));
-    }
-
     public Meal create(Meal meal) {
         int userId = SecurityUtil.authUserId();
         log.info("create {} for user {}", meal, userId);
@@ -60,13 +54,6 @@ public abstract class AbstractMealController {
         log.info("update {} for user {}", meal, userId);
         assureIdConsistent(meal, id);
         service.update(meal, userId);
-    }
-
-    protected void update(MealTo mealTo, int id) {
-        int userId = SecurityUtil.authUserId();
-        log.info("update {} for user {}", mealTo, userId);
-        assureIdConsistent(mealTo, id);
-        service.update(mealTo, userId);
     }
 
     /**

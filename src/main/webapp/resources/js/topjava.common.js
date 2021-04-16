@@ -1,14 +1,23 @@
 let form;
 
-function makeEditable(datatableApi) {
-    ctx.datatableApi = datatableApi;
+function makeEditable(datatableOpts) {
+    ctx.datatableApi = $("#datatable").DataTable(
+        $.extend(true, datatableOpts,
+            {
+                "ajax": {
+                    "url": ctx.ajaxUrl,
+                    "dataSrc": ""
+                },
+                "paging": false,
+                "info": true
+            }
+        ));
 
     form = $('#detailsForm');
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
         failNoty(jqXHR);
     });
 
-    // solve problem with cache in IE: https://stackoverflow.com/a/4303862/548473
     $.ajaxSetup({cache: false});
 }
 
@@ -23,10 +32,16 @@ function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(ctx.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
-            form.find("input[name='" + key + "']").val(value);
+            form.find("input[name='" + key + "']").val(
+                key === "dateTime" ? formatDate(value) : value
+            );
         });
         $('#editRow').modal();
     });
+}
+
+function formatDate(date) {
+    return date.replace('T', ' ').substr(0, 16);
 }
 
 function deleteRow(id) {
@@ -46,7 +61,6 @@ function updateTableByData(data) {
 }
 
 function save() {
-    const form = $("#detailsForm");
     $.ajax({
         type: "POST",
         url: ctx.ajaxUrl,
@@ -83,7 +97,8 @@ function failNoty(jqXHR) {
         text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;" + i18n["common.errorStatus"] + ": " + jqXHR.status + (jqXHR.responseJSON ? "<br>" + jqXHR.responseJSON : ""),
         type: "error",
         layout: "bottomRight"
-    }).show();
+    });
+    failedNote.show();
 }
 
 function renderEditBtn(data, type, row) {
