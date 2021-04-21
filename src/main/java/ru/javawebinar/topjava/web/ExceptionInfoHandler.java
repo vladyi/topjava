@@ -6,11 +6,9 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +21,9 @@ import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
+import static org.springframework.util.StringUtils.capitalize;
 import static ru.javawebinar.topjava.util.exception.ErrorType.APP_ERROR;
 import static ru.javawebinar.topjava.util.exception.ErrorType.DATA_ERROR;
 import static ru.javawebinar.topjava.util.exception.ErrorType.DATA_NOT_FOUND;
@@ -45,12 +45,20 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(BindException.class)
     public ErrorInfo handleBindError(HttpServletRequest req, BindException e) {
-        return getErrorBindingMessage(req, e);
+        return getErrorInfoFromBindingException(req, e);
     }
 
-    private static ErrorInfo getErrorBindingMessage(HttpServletRequest req, BindException e) {
-        String message = "[" + StringUtils.capitalize(e.getFieldError().getField() + "] " + e.getFieldError().getDefaultMessage());
-        return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, message);
+    private static ErrorInfo getErrorInfoFromBindingException(HttpServletRequest req, BindException e) {
+        List<FieldError> fieldErrors = e.getFieldErrors();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        fieldErrors.forEach(s -> stringBuilder.append("[")
+                .append(capitalize(s.getField()))
+                .append("] ")
+                .append(s.getDefaultMessage())
+                .append("<br>"));
+
+        return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, stringBuilder.toString());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
@@ -69,11 +77,6 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(Exception.class)
     public ErrorInfo handleError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e, true, APP_ERROR);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorInfo handleMethodArgumentNotValidException(HttpServletRequest req, MethodArgumentNotValidException error ) {
-        return getErrorBindingMessage(req, (BindException) error.getBindingResult());
     }
 
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
